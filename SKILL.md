@@ -257,12 +257,22 @@ Fallback 链是 OpenClaw 的生命线——主模型挂了，自动尝试下一�
 
 ### 额度监控
 
-用 cron 定期检查额度，超 90% 时告警：
+**🔴 重要：额度查询 API 数据不可信！**
+
+MiniMax 的额度查询 API 存在惰性更新问题——窗口切换后如果没有新调用，计数器不会刷新，返回的数字可能是上一窗口的残留数据。
+
+**推荐做法**：不看数字，只看真实请求能不能通。
 
 ```bash
-curl -s 'https://www.minimaxi.com/v1/api/openplatform/coding_plan/remains' \
-  -H 'Authorization: Bearer <API_KEY>'
+# 判断额度是否可用的唯一可靠方法
+curl -s https://api.minimaxi.com/v1/chat/completions \
+  -H "Authorization: Bearer <API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"MiniMax-M2.1","messages":[{"role":"user","content":"test"}],"max_tokens":3}'
+# 返回 choices → 可用 | 返回 429 → 额度耗尽
 ```
+
+配合 OpenClaw cron 定期验证即可，无需频繁轮询 API 数字。
 
 ---
 
