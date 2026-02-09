@@ -33,6 +33,19 @@ OpenClaw 的模型策略就像组建一支球队：
 
 ---
 
+## 前置条件
+
+- **OpenClaw 已安装并运行**：参考 [官方文档](https://docs.openclaw.ai) 完成安装
+- **至少一个聊天渠道**：Telegram、WhatsApp、Discord 等
+- **Node.js 环境**：用于安装 skills（`clawhub` CLI）
+
+```bash
+# 安装 ClawHub CLI（用于安装 skills）
+npm i -g clawhub
+```
+
+---
+
 ## 第一阶段：零成本起步
 
 **目标**：¥0 成本让系统跑起来。
@@ -181,15 +194,17 @@ Fallback 链是 OpenClaw 的生命线——主模型挂了，自动尝试下一�
 ### 推荐 Fallback 策略
 
 ```
-第1优先：MiniMax M2.1 (包月主力)
+第1优先：minimax/MiniMax-M2.1 (API Key 包月主力)
     ↓ 如果额度用完或 API 故障
-第2优先：SiliconFlow Qwen3-8B (免费兜底)
+第2优先：minimax-portal/MiniMax-M2.1 (OAuth 免费额度)
+    ↓ 如果 OAuth 也不可用
+第3优先：siliconflow/Qwen/Qwen3-8B (免费兜底)
     ↓ 如果 SiliconFlow 也挂了
-第3优先：Qwen Portal (OAuth 免费)
+第4优先：qwen-portal/coder-model (OAuth 免费)
     ↓ 如果都挂了
-第4优先：DeepSeek Chat (便宜)
+第5优先：deepseek/deepseek-chat (便宜)
     ↓ 最后的最后
-第5优先：Claude Haiku (贵但稳)
+第6优先：newcli/claude-haiku (贵但稳)
 ```
 
 ### 配置示例
